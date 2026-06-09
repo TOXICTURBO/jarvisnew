@@ -3,218 +3,205 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>J.A.R.V.I.S. Network Monitor</title>
-  <!-- Tailwind CSS -->
+  <title>Z.E.R.O. Mainframe Setup</title>
+  
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts -->
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
-  <!-- Three.js and Globe.gl -->
+  
   <script src="//unpkg.com/three"></script>
   <script src="//unpkg.com/globe.gl"></script>
 
   <style>
     body {
       font-family: 'Share Tech Mono', monospace;
-      background-color: #020204; /* Deep space black */
+      background-color: #020210; /* Deep navy/black space background */
       overflow: hidden;
+      margin: 0;
+      user-select: none;
     }
-    /* Ambient background glow to match the LED backlights */
+    
+    /* Background Glow matching TV backlights */
     .bg-glow {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 60vw;
-      height: 60vw;
-      background: radial-gradient(circle, rgba(0, 100, 255, 0.15) 0%, rgba(0, 0, 0, 0) 60%);
+      width: 70vw;
+      height: 70vw;
+      background: radial-gradient(circle, rgba(0, 80, 255, 0.15) 0%, rgba(0, 0, 0, 0) 65%);
       z-index: 0;
       pointer-events: none;
     }
-    /* Neon Cyber Glow Effects */
-    .neon-border-cyan {
-      border: 1px solid rgba(6, 182, 212, 0.3);
-      box-shadow: 0 0 15px rgba(6, 182, 212, 0.1), inset 0 0 10px rgba(6, 182, 212, 0.05);
+
+    /* Floating Node Labels CSS */
+    .node-label {
+      background: rgba(0, 20, 50, 0.6);
+      border: 1px solid rgba(0, 243, 255, 0.5);
+      color: #00f3ff;
+      padding: 4px 8px;
+      font-size: 10px;
+      border-radius: 2px;
+      pointer-events: none;
+      backdrop-filter: blur(4px);
+      box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      white-space: nowrap;
     }
-    .neon-text-cyan {
-      color: #06b6d4;
-      text-shadow: 0 0 8px rgba(6, 182, 212, 0.8);
+    .node-label span {
+      display: block;
+      color: #fff;
+      font-size: 8px;
+      opacity: 0.8;
+      margin-top: 2px;
     }
-    .neon-text-red {
-      color: #ef4444;
-      text-shadow: 0 0 8px rgba(239, 68, 68, 0.8);
-    }
-    .neon-text-purple {
-      color: #a855f7;
-      text-shadow: 0 0 8px rgba(168, 85, 247, 0.8);
-    }
+
+    /* UI Text Glow Effects */
+    .neon-text-cyan { color: #00f3ff; text-shadow: 0 0 8px rgba(0, 243, 255, 0.8); }
+    .neon-border-cyan { border: 1px solid rgba(0, 243, 255, 0.3); box-shadow: 0 0 15px rgba(0, 243, 255, 0.1); }
   </style>
 </head>
-<body class="w-screen h-screen text-slate-300 relative select-none">
+<body class="w-screen h-screen text-slate-300 relative">
 
-  <!-- BACKGROUND: Ambient Blue Light & 3D Canvas -->
   <div class="bg-glow"></div>
   <div id="globeViz" class="absolute inset-0 z-10"></div>
 
-  <!-- HEADER LAYER -->
-  <header class="absolute top-0 left-0 w-full p-8 flex justify-between items-start z-20 pointer-events-none">
-    <!-- Top Left Status -->
-    <div class="flex flex-col gap-1">
-      <div class="text-xl font-bold tracking-widest neon-text-cyan flex items-center gap-2">
-        <span>J.A.R.V.I.S.</span>
-        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
-      </div>
-      <div class="text-[10px] text-cyan-500/70 tracking-widest uppercase">MAINFRAME BRAVO // CONNECTED</div>
-      <div class="w-4 h-4 border-l-2 border-t-2 border-cyan-500/40 mt-1"></div>
+  <header class="absolute top-8 left-8 z-20 pointer-events-none">
+    <div class="text-xl font-bold tracking-widest neon-text-cyan flex items-center gap-2">
+      Z.E.R.O.
     </div>
-
-    <!-- Top Right Clock -->
-    <div class="text-right flex flex-col items-end">
-      <div class="text-xs font-semibold tracking-widest text-cyan-400/90 flex items-center gap-2">
-        LISTENING <span class="text-red-500 animate-pulse">●</span>
-      </div>
-      <div id="liveClock" class="text-2xl neon-text-cyan tracking-wider mt-1">00:00:00</div>
-      <div class="w-4 h-4 border-r-2 border-t-2 border-cyan-500/40 mt-1"></div>
-    </div>
+    <div class="text-[10px] text-cyan-400/80 tracking-widest mt-1">OVERRIDE HACK - CONNECTED</div>
+    <div class="w-4 h-4 border-l-2 border-t-2 border-cyan-500/50 mt-2"></div>
   </header>
 
-  <!-- RIGHT PANEL: Matrix -->
-  <section class="absolute right-8 top-32 w-64 neon-border-cyan bg-black/50 backdrop-blur-md p-4 rounded z-20 font-mono text-xs text-cyan-400/90 flex flex-col gap-3 pointer-events-auto">
-    <div class="text-slate-400 tracking-widest border-b border-cyan-500/20 pb-1 font-bold text-[10px]">MONITORING // THREAT STATUS</div>
-    
-    <div class="flex justify-between items-center">
-      <span>PROTOTYPICAL</span>
-      <span class="px-1.5 py-0.5 bg-cyan-900/40 border border-cyan-500/40 text-[10px] text-cyan-300 rounded animate-pulse">LOW</span>
+  <div class="absolute top-8 right-8 z-20 text-right pointer-events-none">
+    <div class="text-sm font-bold tracking-widest text-cyan-400 flex justify-end items-center gap-2">
+      LISTENING <span class="text-cyan-400 animate-pulse text-lg">●</span>
     </div>
-    <div class="flex justify-between items-center">
-      <span>CONVEYANCE</span>
-      <span class="px-1.5 py-0.5 bg-cyan-900/40 border border-cyan-500/40 text-[10px] text-cyan-300 rounded">LOW</span>
+    <div id="liveClock" class="text-xl text-white tracking-widest mt-1">23:36:20</div>
+    <div class="flex justify-end mt-2">
+      <div class="w-8 h-8 rounded-full border border-cyan-500/50 bg-cyan-900/30 flex items-center justify-center">
+        <div class="w-6 h-6 rounded-full bg-gradient-to-b from-white to-cyan-500"></div>
+      </div>
     </div>
-    <div class="flex justify-between items-center">
-      <span>OMNIBUS</span>
-      <span class="px-1.5 py-0.5 bg-red-950/40 border border-red-500/40 text-[10px] text-red-400 rounded neon-text-red">CRITICAL</span>
+  </div>
+
+  <section class="absolute right-8 top-40 w-64 neon-border-cyan bg-[#020210]/60 backdrop-blur-md p-3 z-20 font-mono text-[10px] text-cyan-400 uppercase tracking-wider flex flex-col gap-2">
+    <div class="flex justify-between border-b border-cyan-500/30 pb-1 mb-1 text-[9px] text-slate-400">
+      <span>NEUROLOGY</span><span>SYSTEM STATUS</span>
     </div>
-    <div class="flex justify-between items-center">
-      <span>SUBJECTION</span>
-      <span class="px-1.5 py-0.5 bg-cyan-900/40 border border-cyan-500/40 text-[10px] text-cyan-300 rounded">LOW</span>
-    </div>
-    <div class="flex justify-between items-center text-slate-500">
-      <span>AUTOPILOT</span>
-      <span class="text-[10px] tracking-wider">PLANNED</span>
-    </div>
-    <div class="flex justify-between items-center text-slate-500">
-      <span>CEREBELLUM</span>
-      <span class="text-[10px] tracking-wider">PLANNED</span>
-    </div>
-    <div class="flex justify-between items-center">
-      <span>REFLEX ARC</span>
-      <span class="px-1.5 py-0.5 bg-purple-950/40 border border-purple-500/40 text-[10px] text-purple-300 rounded neon-text-purple">ISOLATED</span>
-    </div>
-    <div class="flex justify-between items-center">
-      <span>CORPUS</span>
-      <span class="px-1.5 py-0.5 bg-cyan-900/40 border border-cyan-500/40 text-[10px] text-cyan-300 rounded">LOW</span>
-    </div>
+    <div class="flex justify-between items-center"><span class="text-white">PROTOTYPICAL</span><span class="px-2 py-[1px] bg-cyan-900/60 border border-cyan-500/50 text-cyan-300">LOW</span></div>
+    <div class="flex justify-between items-center"><span class="text-white">MOTOR</span><span class="px-2 py-[1px] bg-cyan-900/60 border border-cyan-500/50 text-cyan-300">LOW</span></div>
+    <div class="flex justify-between items-center"><span class="text-white">CONCEPT</span><span class="px-2 py-[1px] bg-cyan-900/60 border border-cyan-500/50 text-cyan-300">LOW</span></div>
+    <div class="flex justify-between items-center"><span class="text-white">ASSOCIATION</span><span class="px-2 py-[1px] bg-cyan-900/60 border border-cyan-500/50 text-cyan-300">LOW</span></div>
+    <div class="flex justify-between items-center"><span class="text-white">SENSORY</span><span class="px-2 py-[1px] bg-cyan-900/60 border border-cyan-500/50 text-cyan-300">LOW</span></div>
+    <div class="flex justify-between items-center"><span class="text-white">PROJECTION</span><span class="px-2 py-[1px] bg-cyan-900/60 border border-cyan-500/50 text-cyan-300">LOW</span></div>
+    <div class="flex justify-between items-center"><span class="text-white">PALEOPALLIUM</span><span class="px-2 py-[1px] bg-cyan-900/60 border border-cyan-500/50 text-cyan-300">LOW</span></div>
+    <div class="flex justify-between items-center text-slate-500"><span>CEREBELLUM</span><span>PLANNED</span></div>
+    <div class="flex justify-between items-center text-slate-500"><span>REFLEX ARC</span><span>PLANNED</span></div>
+    <div class="flex justify-between items-center"><span class="text-white">CORPUS</span><span class="px-2 py-[1px] bg-cyan-900/60 border border-cyan-500/50 text-cyan-300">LOW</span></div>
   </section>
 
-  <!-- BOTTOM LAYER: Subtitles -->
-  <footer class="absolute bottom-12 left-0 w-full flex flex-col items-center justify-center gap-4 z-20 pointer-events-none">
-    <div id="subtitles" class="text-sm tracking-wide text-slate-300/90 text-center max-w-xl transition-opacity duration-300 min-h-[20px]">
-      good evening, could you route me through to the agency server please...
+  <footer class="absolute bottom-8 left-0 w-full flex flex-col items-center justify-center gap-6 z-20 pointer-events-none">
+    <div id="subtitles" class="text-[13px] tracking-wide text-slate-200 text-center max-w-2xl min-h-[20px] drop-shadow-lg">
+      good evening could you give me access to the agency please
     </div>
     
-    <div class="w-full px-8 flex justify-between items-end text-[9px] text-cyan-600/50 uppercase tracking-widest font-mono">
-      <div>AGC // LISTENING FOR "HEY JARVIS"</div>
-      <div>"HEY JARVIS" // IN SPACE<br>MGL 42B - LISTENING...</div>
+    <div class="w-full px-8 flex justify-between items-end text-[9px] text-cyan-600 uppercase tracking-widest font-mono">
+      <div>AGC - LISTENING FOR "HEY ZERO"</div>
+      <div class="text-right">"HEY ZERO" - ON SPACE<br>MGL 42B - LISTENING...</div>
     </div>
   </footer>
 
-  <!-- JAVASCRIPT: Logic and Custom 3D Hologram -->
   <script>
-    // 1. Clock
-    function updateClock() {
-      const now = new Date();
-      const hours = String(now.getHours()).padStart(2, '0');
-      const minutes = String(now.getMinutes()).padStart(2, '0');
-      const seconds = String(now.getSeconds()).padStart(2, '0');
-      document.getElementById('liveClock').innerText = `${hours}:${minutes}:${seconds}`;
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
-
-    // 2. Subtitles
-    const subtitlePhrases = [
-      "good evening, could you route me through to the agency server please...",
-      "jarvis, decrypt primary handshake packets from node sector 7...",
-      "warning: unusual packet density detected across trans-atlantic routes...",
-      "establishing quantum tunneling array. synchronization at 94.2%...",
-      "bypassing tertiary firewall metrics... handshake accepted."
-    ];
+    // 1. Clock Logic
     setInterval(() => {
-      const subEl = document.getElementById('subtitles');
-      subEl.style.opacity = 0;
-      setTimeout(() => {
-        subEl.innerText = subtitlePhrases[Math.floor(Math.random() * subtitlePhrases.length)];
-        subEl.style.opacity = 1;
-      }, 300);
-    }, 7000);
+      const now = new Date();
+      document.getElementById('liveClock').innerText = 
+        `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+    }, 1000);
 
-    // 3. Custom 3D Globe - Neural/Sci-Fi Style
-    // Colors matching the original image (White, Red, Yellow, Purple, Cyan)
-    const neonPalettes = ['#ffffff', '#ef4444', '#facc15', '#a855f7', '#00f3ff', '#ffffff']; 
+    // 2. Data Clusters Configuration (Matching Image Colors)
+    const arcsData = [];
+    
+    // Function to generate bursts of lines from specific coordinates
+    function generateCluster(lat, lng, colorStart, colorEnd, count, spread) {
+      for(let i=0; i<count; i++) {
+        arcsData.push({
+          startLat: lat + (Math.random() - 0.5) * spread,
+          startLng: lng + (Math.random() - 0.5) * spread,
+          endLat: lat + (Math.random() - 0.5) * 180, // Shoot out far
+          endLng: lng + (Math.random() - 0.5) * 360,
+          color: [colorStart, colorEnd],
+          altitude: Math.random() * 1.5 + 0.3 // High arcs
+        });
+      }
+    }
 
-    // Create arcs that shoot OUTWARDS off the globe instead of hugging it
-    const arcCount = 350; // High density of lines
-    const networkArcs = [...Array(arcCount).keys()].map(() => {
-      // Cluster starts roughly around specific global points
-      const startLat = (Math.random() - 0.5) * 60;
-      const startLng = (Math.random() - 0.5) * 120;
-      return {
-        startLat: startLat,
-        startLng: startLng,
-        // Send them far away to create long outward sweeping tendrils
-        endLat: startLat + (Math.random() - 0.5) * 180, 
-        endLng: startLng + (Math.random() - 0.5) * 360,
-        color: neonPalettes[Math.floor(Math.random() * neonPalettes.length)],
-        // Randomly assign very high altitudes so they fly off into space
-        altitude: Math.random() * 2.5 + 0.5 
-      };
-    });
+    // Top Right: Red / Purple cluster
+    generateCluster(45, 30, '#ff0055', '#b100ff', 120, 20);
+    // Left: Yellow / White cluster
+    generateCluster(20, -90, '#ffcc00', '#ffffff', 100, 15);
+    // Bottom: Green / Cyan cluster
+    generateCluster(-30, -20, '#00ff66', '#00f3ff', 80, 20);
+    // General global noise: Blue / White
+    generateCluster(0, 0, '#0088ff', '#ffffff', 100, 180);
 
+    // 3. Floating Node Labels (HTML Elements over 3D)
+    const labelData = [
+      { lat: 25, lng: 10, title: "PRIMARY CENTER", sub: "OP SEC: VALIDATED" },
+      { lat: 55, lng: 20, title: "SECONDARY NODE", sub: "TRAFFIC: NOMINAL" },
+      { lat: -15, lng: 5, title: "ROUTING LAYER", sub: "STATUS: ACTIVE" },
+      { lat: -35, lng: 40, title: "TERTIARY LINK", sub: "ENCRYPTED" }
+    ];
+
+    // 4. Initialize Globe.gl
     const globe = Globe()(document.getElementById('globeViz'))
-      .backgroundColor('rgba(0,0,0,0)') // Transparent to show CSS glow
+      .backgroundColor('rgba(0,0,0,0)') // Transparent to show CSS radial glow
       .showGlobe(true)
       .showAtmosphere(true)
-      .atmosphereColor('#0088ff') // Intense blue glow around the core
+      .atmosphereColor('#0066ff') // Intense blue halo
       .atmosphereAltitude(0.2)
-      .arcsData(networkArcs)
+      
+      // Draw Lines
+      .arcsData(arcsData)
       .arcColor('color')
-      .arcDashLength(() => Math.random() * 0.4 + 0.1) // Trails of light
+      .arcDashLength(() => Math.random() * 0.4 + 0.1)
       .arcDashGap(() => Math.random() * 1.5 + 0.5)
-      .arcDashAnimateTime(() => Math.floor(Math.random() * 4000) + 2000)
-      .arcStroke(() => Math.random() * 0.6 + 0.1)
-      .arcAltitude('altitude'); // Apply the high altitudes mapped above
+      .arcDashAnimateTime(() => Math.floor(Math.random() * 3000) + 2000)
+      .arcStroke(() => Math.random() * 0.5 + 0.1)
+      .arcAltitude('altitude')
 
-    // Make the globe itself look like a glowing sci-fi hologram instead of the Earth
-    const globeMaterial = new THREE.MeshPhongMaterial({
-      color: '#001144',       // Dark blue base
-      emissive: '#002288',    // Glowing inner blue
+      // Draw Floating HTML Labels
+      .htmlElementsData(labelData)
+      .htmlElement(d => {
+        const el = document.createElement('div');
+        el.className = 'node-label';
+        el.innerHTML = `${d.title}<span>${d.sub}</span>`;
+        return el;
+      });
+
+    // Make the globe a solid glowing blue orb (No earth map texture)
+    const globeMaterial = new THREE.MeshLambertMaterial({
+      color: '#0022ff',
+      emissive: '#0011aa',
       transparent: true,
-      opacity: 0.85,
-      wireframe: false,
-      shininess: 100
+      opacity: 0.9,
     });
     globe.globeMaterial(globeMaterial);
 
-    // Setup Camera and auto-rotation
+    // Camera and Controls
     globe.controls().autoRotate = true;
-    globe.controls().autoRotateSpeed = 0.8; 
-    globe.controls().enableZoom = false;
+    globe.controls().autoRotateSpeed = 0.4;
+    globe.controls().enableZoom = false; // Lock zoom for display aesthetic
+    
+    // Position camera to frame it slightly off-center left
+    globe.pointOfView({ lat: 10, lng: 0, altitude: 2.8 });
 
-    // Zoom out slightly to see the massive arcs shooting off
-    globe.pointOfView({ lat: 20, lng: 0, altitude: 3.5 });
-
-    // Handle Resize
+    // Handle Window Resize
     window.addEventListener('resize', () => {
       globe.width(window.innerWidth);
       globe.height(window.innerHeight);
