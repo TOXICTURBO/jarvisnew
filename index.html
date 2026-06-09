@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Z.E.R.O. Mainframe Setup</title>
+  <title>J.A.R.V.I.S. Mainframe</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   
@@ -71,9 +71,9 @@
 
   <header class="absolute top-8 left-8 z-20 pointer-events-none">
     <div class="text-xl font-bold tracking-widest neon-text-cyan flex items-center gap-2">
-      Z.E.R.O.
+      J.A.R.V.I.S.
     </div>
-    <div class="text-[10px] text-cyan-400/80 tracking-widest mt-1">OVERRIDE HACK - CONNECTED</div>
+    <div class="text-[10px] text-cyan-400/80 tracking-widest mt-1">CORE PROTOCOL - CONNECTED</div>
     <div class="w-4 h-4 border-l-2 border-t-2 border-cyan-500/50 mt-2"></div>
   </header>
 
@@ -89,8 +89,8 @@
     </div>
   </div>
 
-  <section class="absolute right-8 top-40 w-64 neon-border-cyan bg-[#020210]/60 backdrop-blur-md p-3 z-20 font-mono text-[10px] text-cyan-400 uppercase tracking-wider flex flex-col gap-2">
-    <div class="flex justify-between border-b border-cyan-500/30 pb-1 mb-1 text-[9px] text-slate-400">
+  <section class="absolute right-8 top-40 w-64 neon-border-cyan bg-[#020210]/60 backdrop-blur-md p-3 z-20 font-mono text-[10px] text-cyan-400 uppercase tracking-wider flex flex-col gap-2 pointer-events-auto">
+    <div class="flex justify-between border-b border-cyan-500/30 pb-1 mb-1 text-[9px] text-slate-400 font-bold">
       <span>NEUROLOGY</span><span>SYSTEM STATUS</span>
     </div>
     <div class="flex justify-between items-center"><span class="text-white">PROTOTYPICAL</span><span class="px-2 py-[1px] bg-cyan-900/60 border border-cyan-500/50 text-cyan-300">LOW</span></div>
@@ -98,7 +98,7 @@
     <div class="flex justify-between items-center"><span class="text-white">CONCEPT</span><span class="px-2 py-[1px] bg-cyan-900/60 border border-cyan-500/50 text-cyan-300">LOW</span></div>
     <div class="flex justify-between items-center"><span class="text-white">ASSOCIATION</span><span class="px-2 py-[1px] bg-cyan-900/60 border border-cyan-500/50 text-cyan-300">LOW</span></div>
     <div class="flex justify-between items-center"><span class="text-white">SENSORY</span><span class="px-2 py-[1px] bg-cyan-900/60 border border-cyan-500/50 text-cyan-300">LOW</span></div>
-    <div class="flex justify-between items-center"><span class="text-white">PROJECTION</span><span class="px-2 py-[1px] bg-cyan-900/60 border border-cyan-500/50 text-cyan-300">LOW</span></div>
+    <div class="flex justify-between items-center"><span class="text-white">PROJECTION</span><span class="px-2 py-[1px] bg-cyan-900/60 border border-cyan-500/50 text-cyan-300 animate-pulse">ACTIVE</span></div>
     <div class="flex justify-between items-center"><span class="text-white">PALEOPALLIUM</span><span class="px-2 py-[1px] bg-cyan-900/60 border border-cyan-500/50 text-cyan-300">LOW</span></div>
     <div class="flex justify-between items-center text-slate-500"><span>CEREBELLUM</span><span>PLANNED</span></div>
     <div class="flex justify-between items-center text-slate-500"><span>REFLEX ARC</span><span>PLANNED</span></div>
@@ -106,13 +106,13 @@
   </section>
 
   <footer class="absolute bottom-8 left-0 w-full flex flex-col items-center justify-center gap-6 z-20 pointer-events-none">
-    <div id="subtitles" class="text-[13px] tracking-wide text-slate-200 text-center max-w-2xl min-h-[20px] drop-shadow-lg">
+    <div id="subtitles" class="text-[13px] tracking-wide text-slate-200 text-center max-w-2xl min-h-[20px] drop-shadow-lg transition-opacity duration-300">
       good evening could you give me access to the agency please
     </div>
     
     <div class="w-full px-8 flex justify-between items-end text-[9px] text-cyan-600 uppercase tracking-widest font-mono">
-      <div>AGC - LISTENING FOR "HEY ZERO"</div>
-      <div class="text-right">"HEY ZERO" - ON SPACE<br>MGL 42B - LISTENING...</div>
+      <div>AGC - LISTENING FOR "HEY JARVIS"</div>
+      <div class="text-right">"HEY JARVIS" - ON SPACE<br>MGL 42B - LISTENING...</div>
     </div>
   </footer>
 
@@ -124,7 +124,24 @@
         `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
     }, 1000);
 
-    // 2. Data Clusters Configuration (Matching Image Colors)
+    // 2. Automated Subtitles
+    const subtitlesArray = [
+      "good evening could you give me access to the agency please",
+      "jarvis, initialize the primary rendering protocol",
+      "scanning global networks for anomalous data packets...",
+      "bypassing tertiary firewall... handshake accepted.",
+      "all systems nominal. awaiting further instruction."
+    ];
+    setInterval(() => {
+      const subEl = document.getElementById('subtitles');
+      subEl.style.opacity = 0;
+      setTimeout(() => {
+        subEl.innerText = subtitlesArray[Math.floor(Math.random() * subtitlesArray.length)];
+        subEl.style.opacity = 1;
+      }, 300);
+    }, 6000);
+
+    // 3. Data Clusters Configuration (Matching Image Colors)
     const arcsData = [];
     
     // Function to generate bursts of lines from specific coordinates
@@ -150,7 +167,7 @@
     // General global noise: Blue / White
     generateCluster(0, 0, '#0088ff', '#ffffff', 100, 180);
 
-    // 3. Floating Node Labels (HTML Elements over 3D)
+    // 4. Floating Node Labels (HTML Elements over 3D)
     const labelData = [
       { lat: 25, lng: 10, title: "PRIMARY CENTER", sub: "OP SEC: VALIDATED" },
       { lat: 55, lng: 20, title: "SECONDARY NODE", sub: "TRAFFIC: NOMINAL" },
@@ -158,7 +175,7 @@
       { lat: -35, lng: 40, title: "TERTIARY LINK", sub: "ENCRYPTED" }
     ];
 
-    // 4. Initialize Globe.gl
+    // 5. Initialize Globe.gl
     const globe = Globe()(document.getElementById('globeViz'))
       .backgroundColor('rgba(0,0,0,0)') // Transparent to show CSS radial glow
       .showGlobe(true)
