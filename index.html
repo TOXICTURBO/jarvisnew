@@ -3,52 +3,73 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Z.E.R.O. Network Monitor</title>
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <title>J.A.R.V.I.S. Network Monitor</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <!-- Three.js and Globe.gl -->
+  <script src="//unpkg.com/three"></script>
   <script src="//unpkg.com/globe.gl"></script>
 
   <style>
     body {
       font-family: 'Share Tech Mono', monospace;
-      background-color: #040406;
+      background-color: #020204; /* Deep space black */
       overflow: hidden;
+    }
+    /* Ambient background glow to match the LED backlights */
+    .bg-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 60vw;
+      height: 60vw;
+      background: radial-gradient(circle, rgba(0, 100, 255, 0.15) 0%, rgba(0, 0, 0, 0) 60%);
+      z-index: 0;
+      pointer-events: none;
     }
     /* Neon Cyber Glow Effects */
     .neon-border-cyan {
-      border: 1px solid rgba(6, 182, 212, 0.4);
-      box-shadow: 0 0 15px rgba(6, 182, 212, 0.15), inset 0 0 15px rgba(6, 182, 212, 0.05);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      box-shadow: 0 0 15px rgba(6, 182, 212, 0.1), inset 0 0 10px rgba(6, 182, 212, 0.05);
     }
     .neon-text-cyan {
       color: #06b6d4;
-      text-shadow: 0 0 8px rgba(6, 182, 212, 0.6);
+      text-shadow: 0 0 8px rgba(6, 182, 212, 0.8);
     }
     .neon-text-red {
       color: #ef4444;
-      text-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+      text-shadow: 0 0 8px rgba(239, 68, 68, 0.8);
     }
     .neon-text-purple {
       color: #a855f7;
-      text-shadow: 0 0 8px rgba(168, 85, 247, 0.6);
+      text-shadow: 0 0 8px rgba(168, 85, 247, 0.8);
     }
   </style>
 </head>
 <body class="w-screen h-screen text-slate-300 relative select-none">
 
-  <div id="globeViz" class="absolute inset-0 z-0"></div>
+  <!-- BACKGROUND: Ambient Blue Light & 3D Canvas -->
+  <div class="bg-glow"></div>
+  <div id="globeViz" class="absolute inset-0 z-10"></div>
 
-  <header class="absolute top-0 left-0 w-full p-8 flex justify-between items-start z-10 pointer-events-none">
+  <!-- HEADER LAYER -->
+  <header class="absolute top-0 left-0 w-full p-8 flex justify-between items-start z-20 pointer-events-none">
+    <!-- Top Left Status -->
     <div class="flex flex-col gap-1">
       <div class="text-xl font-bold tracking-widest neon-text-cyan flex items-center gap-2">
-        <span>Z.E.R.O.</span>
+        <span>J.A.R.V.I.S.</span>
         <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
       </div>
-      <div class="text-[10px] text-cyan-500/70 tracking-widest uppercase">NODE_LINK BRAVO // CONNECTED</div>
+      <div class="text-[10px] text-cyan-500/70 tracking-widest uppercase">MAINFRAME BRAVO // CONNECTED</div>
       <div class="w-4 h-4 border-l-2 border-t-2 border-cyan-500/40 mt-1"></div>
     </div>
 
+    <!-- Top Right Clock -->
     <div class="text-right flex flex-col items-end">
       <div class="text-xs font-semibold tracking-widest text-cyan-400/90 flex items-center gap-2">
         LISTENING <span class="text-red-500 animate-pulse">●</span>
@@ -58,7 +79,8 @@
     </div>
   </header>
 
-  <section class="absolute right-8 top-32 w-64 neon-border-cyan bg-black/40 backdrop-blur-md p-4 rounded z-10 font-mono text-xs text-cyan-400/90 flex flex-col gap-3 pointer-events-auto">
+  <!-- RIGHT PANEL: Matrix -->
+  <section class="absolute right-8 top-32 w-64 neon-border-cyan bg-black/50 backdrop-blur-md p-4 rounded z-20 font-mono text-xs text-cyan-400/90 flex flex-col gap-3 pointer-events-auto">
     <div class="text-slate-400 tracking-widest border-b border-cyan-500/20 pb-1 font-bold text-[10px]">MONITORING // THREAT STATUS</div>
     
     <div class="flex justify-between items-center">
@@ -95,19 +117,21 @@
     </div>
   </section>
 
-  <footer class="absolute bottom-12 left-0 w-full flex flex-col items-center justify-center gap-4 z-10 pointer-events-none">
+  <!-- BOTTOM LAYER: Subtitles -->
+  <footer class="absolute bottom-12 left-0 w-full flex flex-col items-center justify-center gap-4 z-20 pointer-events-none">
     <div id="subtitles" class="text-sm tracking-wide text-slate-300/90 text-center max-w-xl transition-opacity duration-300 min-h-[20px]">
       good evening, could you route me through to the agency server please...
     </div>
     
     <div class="w-full px-8 flex justify-between items-end text-[9px] text-cyan-600/50 uppercase tracking-widest font-mono">
-      <div>AGC // LISTENING FOR "HEY ZERO"</div>
-      <div>"HEY ZERO" // IN SPACE<br>MGL 42B - LISTENING...</div>
+      <div>AGC // LISTENING FOR "HEY JARVIS"</div>
+      <div>"HEY JARVIS" // IN SPACE<br>MGL 42B - LISTENING...</div>
     </div>
   </footer>
 
+  <!-- JAVASCRIPT: Logic and Custom 3D Hologram -->
   <script>
-    // 1. Digital Clock Functional Script
+    // 1. Clock
     function updateClock() {
       const now = new Date();
       const hours = String(now.getHours()).padStart(2, '0');
@@ -118,10 +142,10 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // 2. Automated Subtitle Prompt Simulator
+    // 2. Subtitles
     const subtitlePhrases = [
       "good evening, could you route me through to the agency server please...",
-      "decrypting primary handshake packets from node sector 7...",
+      "jarvis, decrypt primary handshake packets from node sector 7...",
       "warning: unusual packet density detected across trans-atlantic routes...",
       "establishing quantum tunneling array. synchronization at 94.2%...",
       "bypassing tertiary firewall metrics... handshake accepted."
@@ -135,55 +159,62 @@
       }, 300);
     }, 7000);
 
-    // 3. 3D Cyber Globe Creation via WebGL
-    // Coordinates mapping global hub zones roughly mimicking the clusters from the user's image
-    const hubs = [
-      { lat: 40.7128, lng: -74.0060, name: 'North America Hub' }, // NYC
-      { lat: 51.5074, lng: -0.1278, name: 'Europe Hub' },       // London
-      { lat: 35.6762, lng: 139.6503, name: 'Asia Hub' },        // Tokyo
-      { lat: -22.9068, lng: -43.1729, name: 'South America' },  // Rio
-      { lat: -33.8688, lng: 151.2093, name: 'Australia Hub' }   // Sydney
-    ];
+    // 3. Custom 3D Globe - Neural/Sci-Fi Style
+    // Colors matching the original image (White, Red, Yellow, Purple, Cyan)
+    const neonPalettes = ['#ffffff', '#ef4444', '#facc15', '#a855f7', '#00f3ff', '#ffffff']; 
 
-    // Seed randomized networking curves flowing outward globally
-    const arcCount = 120;
-    const neonPalettes = ['#06b6d4', '#ef4444', '#a855f7', '#eab308']; // Cyan, Red, Purple, Yellow
-
+    // Create arcs that shoot OUTWARDS off the globe instead of hugging it
+    const arcCount = 350; // High density of lines
     const networkArcs = [...Array(arcCount).keys()].map(() => {
-      // Pick a real operational hub anchor point, then project randomly outward
-      const anchorHub = hubs[Math.floor(Math.random() * hubs.length)];
+      // Cluster starts roughly around specific global points
+      const startLat = (Math.random() - 0.5) * 60;
+      const startLng = (Math.random() - 0.5) * 120;
       return {
-        startLat: anchorHub.lat,
-        startLng: anchorHub.lng,
-        endLat: (Math.random() - 0.5) * 160, 
-        endLng: (Math.random() - 0.5) * 320,
-        // Assign random color vector matching UI properties
-        color: neonPalettes[Math.floor(Math.random() * neonPalettes.length)]
+        startLat: startLat,
+        startLng: startLng,
+        // Send them far away to create long outward sweeping tendrils
+        endLat: startLat + (Math.random() - 0.5) * 180, 
+        endLng: startLng + (Math.random() - 0.5) * 360,
+        color: neonPalettes[Math.floor(Math.random() * neonPalettes.length)],
+        // Randomly assign very high altitudes so they fly off into space
+        altitude: Math.random() * 2.5 + 0.5 
       };
     });
 
-    // Initialize WebGL instance targeting element layer
     const globe = Globe()(document.getElementById('globeViz'))
-      .globeImageUrl('//unpkg.com/three-globe/example/img/earth-dark.jpg')
-      .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
-      .backgroundColor('rgba(4,4,6,1)')
+      .backgroundColor('rgba(0,0,0,0)') // Transparent to show CSS glow
+      .showGlobe(true)
+      .showAtmosphere(true)
+      .atmosphereColor('#0088ff') // Intense blue glow around the core
+      .atmosphereAltitude(0.2)
       .arcsData(networkArcs)
       .arcColor('color')
-      .arcDashLength(0.35)
-      .arcDashGap(1.5)
-      .arcDashAnimateTime(() => Math.floor(Math.random() * 2000) + 1000) // Fast pulsing data packets
-      .arcStroke(() => Math.random() * 0.4 + 0.2)
-      .arcAltitude(() => Math.random() * 0.3 + 0.05); // Variable heights to emulate complex radial strings
+      .arcDashLength(() => Math.random() * 0.4 + 0.1) // Trails of light
+      .arcDashGap(() => Math.random() * 1.5 + 0.5)
+      .arcDashAnimateTime(() => Math.floor(Math.random() * 4000) + 2000)
+      .arcStroke(() => Math.random() * 0.6 + 0.1)
+      .arcAltitude('altitude'); // Apply the high altitudes mapped above
 
-    // Configure 3D Camera Controls
+    // Make the globe itself look like a glowing sci-fi hologram instead of the Earth
+    const globeMaterial = new THREE.MeshPhongMaterial({
+      color: '#001144',       // Dark blue base
+      emissive: '#002288',    // Glowing inner blue
+      transparent: true,
+      opacity: 0.85,
+      wireframe: false,
+      shininess: 100
+    });
+    globe.globeMaterial(globeMaterial);
+
+    // Setup Camera and auto-rotation
     globe.controls().autoRotate = true;
-    globe.controls().autoRotateSpeed = 0.6; // Gentle spin velocity
-    globe.controls().enableZoom = false;     // Locks scale frame for display setups
+    globe.controls().autoRotateSpeed = 0.8; 
+    globe.controls().enableZoom = false;
 
-    // Adjust camera position to frame nicely behind UI overlays
-    globe.pointOfView({ lat: 20, lng: 0, altitude: 2.1 });
+    // Zoom out slightly to see the massive arcs shooting off
+    globe.pointOfView({ lat: 20, lng: 0, altitude: 3.5 });
 
-    // Ensure fluid canvas scaling if display size thresholds shift
+    // Handle Resize
     window.addEventListener('resize', () => {
       globe.width(window.innerWidth);
       globe.height(window.innerHeight);
